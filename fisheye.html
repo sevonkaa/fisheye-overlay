@@ -27,7 +27,7 @@
     document.body.appendChild(app.view);
 
     const graphics = new PIXI.Graphics();
-    graphics.beginFill(0x00ffff, 1.0); // Голубой с прозрачностью
+    graphics.beginFill(0x00ffff, 0.15); // Голубой с прозрачностью
     graphics.drawRect(0, 0, window.innerWidth, window.innerHeight);
     graphics.endFill();
     app.stage.addChild(graphics);
