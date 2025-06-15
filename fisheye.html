@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Fisheye Overlay</title>
   <style>
     html, body {
       margin: 0;
       padding: 0;
-      background: transparent;
       overflow: hidden;
+      background: transparent;
       width: 100%;
       height: 100%;
     }
@@ -27,7 +27,7 @@
     document.body.appendChild(app.view);
 
     const graphics = new PIXI.Graphics();
-    graphics.beginFill(0xffffff);
+    graphics.beginFill(0x00ffff, 0.15); // Голубой с прозрачностью
     graphics.drawRect(0, 0, window.innerWidth, window.innerHeight);
     graphics.endFill();
     app.stage.addChild(graphics);
@@ -51,15 +51,15 @@
       }
     `;
 
-    const fisheye = new PIXI.Filter(null, fragment, {
+    const fisheyeFilter = new PIXI.Filter(null, fragment, {
       strength: 0.5
     });
 
-    graphics.filters = [fisheye];
+    graphics.filters = [fisheyeFilter];
 
     window.addEventListener("resize", () => {
       graphics.clear();
-      graphics.beginFill(0xffffff);
+      graphics.beginFill(0x00ffff, 0.15);
       graphics.drawRect(0, 0, window.innerWidth, window.innerHeight);
       graphics.endFill();
     });
