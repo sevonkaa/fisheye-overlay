@@ -1,14 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Fisheye Overlay</title>
+  <meta charset="UTF-8" />
+  <title>Fisheye Effect</title>
   <style>
     html, body {
-      margin: 0;
-      padding: 0;
-      overflow: hidden;
-      background: transparent;
+      margin: 0; padding: 0; overflow: hidden; background: transparent;
+      width: 100vw; height: 100vh;
     }
     canvas {
       display: block;
@@ -18,32 +16,53 @@
   </style>
 </head>
 <body>
-  <script src="https://cdn.jsdelivr.net/npm/pixi.js@7/dist/pixi.min.js"></script>
-  <script>
-    const app = new PIXI.Application({
-      resizeTo: window,
-      transparent: true,
-    });
-    document.body.appendChild(app.view);
+<script src="https://cdn.jsdelivr.net/npm/pixi.js@7/dist/pixi.min.js"></script>
+<script>
+  const app = new PIXI.Application({
+    resizeTo: window,
+    transparent: true,
+  });
+  document.body.appendChild(app.view);
 
-    const filter = new PIXI.filters.FisheyeFilter({
-      strength: 0.4 // увеличьте/уменьшите по вкусу
-    });
+  // Квадрат, который покроет весь экран (тут можно добавить вашу сцену или скриншот)
+  const graphics = new PIXI.Graphics();
+  graphics.beginFill(0x66ccff);
+  graphics.drawRect(0, 0, window.innerWidth, window.innerHeight);
+  graphics.endFill();
+  app.stage.addChild(graphics);
 
-    const screen = new PIXI.Graphics();
-    screen.beginFill(0xffffff);
-    screen.drawRect(0, 0, window.innerWidth, window.innerHeight);
-    screen.endFill();
+  // GLSL шейдер с искажением рыбий глаз
+  const fragmentShader = `
+  precision mediump float;
+  varying vec2 vTextureCoord;
+  uniform sampler2D uSampler;
+  uniform float strength;
 
-    screen.filters = [filter];
-    app.stage.addChild(screen);
+  void main(void){
+    vec2 uv = vTextureCoord * 2.0 - 1.0;
+    float r = length(uv);
+    if (r < 1.0) {
+      float theta = atan(uv.y, uv.x);
+      float nr = pow(r, 1.0 - strength);
+      uv = nr * vec2(cos(theta), sin(theta));
+    }
+    uv = (uv + 1.0) / 2.0;
+    gl_FragColor = texture2D(uSampler, uv);
+  }
+  `;
 
-    window.addEventListener('resize', () => {
-      screen.clear();
-      screen.beginFill(0xffffff);
-      screen.drawRect(0, 0, window.innerWidth, window.innerHeight);
-      screen.endFill();
-    });
-  </script>
+  // Создаём фильтр с параметром strength — сила искажения
+  const fisheyeFilter = new PIXI.Filter(null, fragmentShader, { strength: 0.5 });
+
+  graphics.filters = [fisheyeFilter];
+
+  window.addEventListener('resize', () => {
+    app.renderer.resize(window.innerWidth, window.innerHeight);
+    graphics.clear();
+    graphics.beginFill(0x66ccff);
+    graphics.drawRect(0, 0, window.innerWidth, window.innerHeight);
+    graphics.endFill();
+  });
+</script>
 </body>
 </html>
