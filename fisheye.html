@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Fisheye Overlay</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: transparent;
+    }
+    canvas {
+      display: block;
+      width: 100vw;
+      height: 100vh;
+    }
+  </style>
+</head>
+<body>
+  <script src="https://cdn.jsdelivr.net/npm/pixi.js@7/dist/pixi.min.js"></script>
+  <script>
+    const app = new PIXI.Application({
+      resizeTo: window,
+      transparent: true,
+    });
+    document.body.appendChild(app.view);
+
+    const filter = new PIXI.filters.FisheyeFilter({
+      strength: 0.4 // увеличьте/уменьшите по вкусу
+    });
+
+    const screen = new PIXI.Graphics();
+    screen.beginFill(0xffffff);
+    screen.drawRect(0, 0, window.innerWidth, window.innerHeight);
+    screen.endFill();
+
+    screen.filters = [filter];
+    app.stage.addChild(screen);
+
+    window.addEventListener('resize', () => {
+      screen.clear();
+      screen.beginFill(0xffffff);
+      screen.drawRect(0, 0, window.innerWidth, window.innerHeight);
+      screen.endFill();
+    });
+  </script>
+</body>
+</html>
