@@ -22,18 +22,20 @@
   <script>
     const app = new PIXI.Application({
       resizeTo: window,
-      transparent: true
+      transparent: true // прозрачный фон
     });
     document.body.appendChild(app.view);
 
+    // Создаем спрайт с текстурой, которая будет нашим фоном
     const sprite = new PIXI.Sprite(PIXI.Texture.WHITE);
     sprite.width = window.innerWidth;
     sprite.height = window.innerHeight;
-    sprite.tint = 0xffffff; // белый цвет
-    sprite.alpha = 1; // прозрачность если нужно
+    sprite.tint = 0xffffff;
+    sprite.alpha = 0; // полностью прозрачный, чтобы не закрывать контент под iframe
 
     app.stage.addChild(sprite);
 
+    // Фишай шейдер
     const fragment = `
       precision mediump float;
       varying vec2 vTextureCoord;
