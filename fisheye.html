@@ -1,16 +1,13 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <title>Fisheye Overlay</title>
+  <meta charset="UTF-8">
+  <title>Pixi Test</title>
   <style>
     html, body {
       margin: 0;
-      padding: 0;
-      overflow: hidden;
-      background: transparent;
-      width: 100%;
       height: 100%;
+      background: #fff;
     }
     canvas {
       display: block;
@@ -22,47 +19,16 @@
   <script>
     const app = new PIXI.Application({
       resizeTo: window,
-      transparent: true
+      backgroundColor: 0xffffff
     });
     document.body.appendChild(app.view);
 
-    const graphics = new PIXI.Graphics();
-    graphics.beginFill(0x00ffff, 0.15); // Голубой с прозрачностью
-    graphics.drawRect(0, 0, window.innerWidth, window.innerHeight);
-    graphics.endFill();
-    app.stage.addChild(graphics);
+    const circle = new PIXI.Graphics();
+    circle.beginFill(0xff0000);
+    circle.drawCircle(window.innerWidth/2, window.innerHeight/2, 100);
+    circle.endFill();
 
-    const fragment = `
-      precision mediump float;
-      varying vec2 vTextureCoord;
-      uniform sampler2D uSampler;
-      uniform float strength;
-
-      void main(void) {
-        vec2 uv = vTextureCoord * 2.0 - 1.0;
-        float r = length(uv);
-        if (r < 1.0) {
-          float theta = atan(uv.y, uv.x);
-          float nr = pow(r, 1.0 - strength);
-          uv = nr * vec2(cos(theta), sin(theta));
-        }
-        uv = (uv + 1.0) / 2.0;
-        gl_FragColor = texture2D(uSampler, uv);
-      }
-    `;
-
-    const fisheyeFilter = new PIXI.Filter(null, fragment, {
-      strength: 0.5
-    });
-
-    graphics.filters = [fisheyeFilter];
-
-    window.addEventListener("resize", () => {
-      graphics.clear();
-      graphics.beginFill(0x00ffff, 0.15);
-      graphics.drawRect(0, 0, window.innerWidth, window.innerHeight);
-      graphics.endFill();
-    });
+    app.stage.addChild(circle);
   </script>
 </body>
 </html>
